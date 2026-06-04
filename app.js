@@ -274,10 +274,14 @@ function renderAssignmentDetail() {
   }
 
   const rows = assignment.terms.map((term, index) => `
-    <li>
-      <span>${String(index + 1).padStart(2, "0")}</span>
-      <strong>${escapeHtml(term.terms["en-US"])}</strong>
-      <em>${escapeHtml(term.terms["zh-TW"])}</em>
+    <li class="assignment-term-card">
+      <div class="assignment-term-number">${String(index + 1).padStart(2, "0")}</div>
+      <div class="assignment-term-body">
+        <h4>${escapeHtml(term.terms["en-US"])}</h4>
+        <div class="assignment-language-list">
+          ${renderAssignmentLanguageRows(term.terms)}
+        </div>
+      </div>
     </li>
   `).join("");
 
@@ -288,6 +292,20 @@ function renderAssignmentDetail() {
     </div>
     <ol class="assignment-terms">${rows}</ol>
   `;
+
+  assignmentDetail.querySelectorAll(".speak-icon").forEach((button) => {
+    button.addEventListener("click", () => speak(button.dataset.text, button.dataset.lang));
+  });
+}
+
+function renderAssignmentLanguageRows(content) {
+  return Object.entries(labels).map(([lang, label]) => `
+    <div class="assignment-language-row">
+      <span>${label}</span>
+      <strong>${escapeHtml(content[lang])}</strong>
+      ${renderSpeakIcon(content[lang], lang, label)}
+    </div>
+  `).join("");
 }
 
 function renderDetail() {

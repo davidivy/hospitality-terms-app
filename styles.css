@@ -202,29 +202,28 @@ h1 {
 
 .assignment-terms {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.assignment-terms li {
+.assignment-term-card {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-  min-height: 48px;
-  padding: 8px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 7px;
   background: #ffffff;
 }
 
-.assignment-terms li span {
+.assignment-term-number {
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   place-items: center;
   border-radius: 999px;
   background: var(--soft);
@@ -233,22 +232,55 @@ h1 {
   font-weight: 900;
 }
 
-.assignment-terms li strong,
-.assignment-terms li em {
-  display: block;
+.assignment-term-body {
   min-width: 0;
+}
+
+.assignment-term-body h4 {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 16px;
   overflow-wrap: anywhere;
 }
 
-.assignment-terms li strong {
-  font-size: 14px;
+.assignment-language-list {
+  display: grid;
+  gap: 7px;
 }
 
-.assignment-terms li em {
-  grid-column: 2;
+.assignment-language-row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 34px;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fbfcfa;
+}
+
+.assignment-language-row span {
   color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.assignment-language-row strong {
+  min-width: 0;
+  color: #2c3a40;
   font-size: 13px;
-  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.assignment-language-row .speak-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.assignment-language-row .speak-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .search-panel {
@@ -564,5 +596,9 @@ h1 {
 
   .assignment-terms {
     grid-template-columns: 1fr;
+  }
+
+  .assignment-language-row {
+    grid-template-columns: 74px minmax(0, 1fr) 34px;
   }
 }
