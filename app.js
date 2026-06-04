@@ -44,6 +44,8 @@ const voiceSettings = {
 const state = {
   terms: [],
   filtered: [],
+  assignments: [],
+  activeAssignmentId: "",
   activeId: null,
   recognition: null
 };
@@ -57,6 +59,10 @@ const voiceButton = document.querySelector("#voiceButton");
 const statusText = document.querySelector("#statusText");
 const termList = document.querySelector("#termList");
 const termDetail = document.querySelector("#termDetail");
+const assignmentSummary = document.querySelector("#assignmentSummary");
+const assignmentSelect = document.querySelector("#assignmentSelect");
+const assignmentDetail = document.querySelector("#assignmentDetail");
+const clearAssignmentButton = document.querySelector("#clearAssignmentButton");
 
 init();
 
@@ -64,9 +70,11 @@ async function init() {
   try {
     const response = await fetch("terms.json");
     state.terms = await response.json();
+    state.assignments = buildAssignments(state.terms);
     state.filtered = state.terms;
     state.activeId = state.terms[0]?.id ?? null;
     setupCategories();
+    setupAssignments();
     setupVoiceSearch();
     bindEvents();
     render();
@@ -83,12 +91,43 @@ function bindEvents() {
   });
   categorySelect.addEventListener("change", filterTerms);
   voiceButton.addEventListener("click", startVoiceSearch);
+  assignmentSelect.addEventListener("change", applyAssignment);
+  clearAssignmentButton.addEventListener("click", clearAssignment);
 
   if (window.speechSynthesis) {
     window.speechSynthesis.addEventListener("voiceschanged", () => {
       window.speechSynthesis.getVoices();
     });
   }
+}
+
+function buildAssignments(terms) {
+  const size = 15;
+  const assignments = [];
+
+  for (let index = 0; index < terms.length; index += size) {
+    const termsForAssignment = terms.slice(index, index + size);
+    const number = String(assignments.length + 1).padStart(2, "0");
+    assignments.push({
+      id: number,
+      title: `作業編號 ${number}`,
+      terms: termsForAssignment,
+      start: index + 1,
+      end: index + termsForAssignment.length
+    });
+  }
+
+  return assignments;
+}
+
+function setupAssignments() {
+  assignmentSummary.textContent = `共 ${state.assignments.length} 份作業，每份約 15 個單字，可作為課堂聽寫複習。`;
+  state.assignments.forEach((assignment) => {
+    const option = document.createElement("option");
+    option.value = assignment.id;
+    option.textContent = `${assignment.title}（${assignment.start}-${assignment.end}）`;
+    assignmentSelect.append(option);
+  });
 }
 
 function setupCategories() {
@@ -149,9 +188,12 @@ function startVoiceSearch() {
 function filterTerms() {
   const query = normalize(searchInput.value);
   const category = categorySelect.value;
+  const assignment = state.assignments.find((item) => item.id === state.activeAssignmentId);
+  const assignmentIds = new Set(assignment?.terms.map((term) => term.id) ?? []);
 
   state.filtered = state.terms.filter((term) => {
     const termCategories = term.categories ?? [term.category];
+    const assignmentMatch = !assignment || assignmentIds.has(term.id);
     const categoryMatch = category === "all" || termCategories.includes(category);
     const text = [
       ...termCategories,
@@ -160,7 +202,7 @@ function filterTerms() {
       ...Object.values(term.terms),
       ...term.examples.flatMap((example) => Object.values(example))
     ].join(" ");
-    return categoryMatch && normalize(text).includes(query);
+    return assignmentMatch && categoryMatch && normalize(text).includes(query);
   });
 
   if (!state.filtered.some((term) => term.id === state.activeId)) {
@@ -170,11 +212,29 @@ function filterTerms() {
   render();
 }
 
+function applyAssignment() {
+  state.activeAssignmentId = assignmentSelect.value;
+  searchInput.value = "";
+  categorySelect.value = "all";
+  filterTerms();
+  renderAssignmentDetail();
+}
+
+function clearAssignment() {
+  state.activeAssignmentId = "";
+  assignmentSelect.value = "";
+  searchInput.value = "";
+  categorySelect.value = "all";
+  filterTerms();
+  renderAssignmentDetail();
+}
+
 function render() {
   termCount.textContent = `${state.terms.length} 詞`;
   matchCount.textContent = `${state.filtered.length} 筆`;
   renderList();
   renderDetail();
+  renderAssignmentDetail();
 }
 
 function renderList() {
@@ -199,9 +259,35 @@ function renderList() {
     button.addEventListener("click", () => {
       state.activeId = term.id;
       render();
+      termDetail.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     termList.append(button);
   });
+}
+
+function renderAssignmentDetail() {
+  const assignment = state.assignments.find((item) => item.id === state.activeAssignmentId);
+
+  if (!assignment) {
+    assignmentDetail.innerHTML = "<p>選擇作業後，會列出本次聽寫單字與對應中文。</p>";
+    return;
+  }
+
+  const rows = assignment.terms.map((term, index) => `
+    <li>
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <strong>${escapeHtml(term.terms["en-US"])}</strong>
+      <em>${escapeHtml(term.terms["zh-TW"])}</em>
+    </li>
+  `).join("");
+
+  assignmentDetail.innerHTML = `
+    <div class="assignment-callout">
+      <strong>${assignment.title}</strong>
+      <p>老師可宣布：「同學複習${assignment.title}，下週上課考聽寫。」</p>
+    </div>
+    <ol class="assignment-terms">${rows}</ol>
+  `;
 }
 
 function renderDetail() {

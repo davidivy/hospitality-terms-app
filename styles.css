@@ -88,6 +88,7 @@ h1 {
   font-weight: 700;
 }
 
+.assignment-panel,
 .search-panel,
 .detail,
 .term-list {
@@ -95,6 +96,159 @@ h1 {
   border-radius: 8px;
   background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+.assignment-panel {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.assignment-heading {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.assignment-heading h2 {
+  margin-bottom: 4px;
+  font-size: 22px;
+}
+
+.assignment-heading p,
+.assignment-detail p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.assignment-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--brand-strong);
+  color: #fff;
+}
+
+.assignment-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.assignment-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.assignment-controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.assignment-controls select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fbfcfa;
+  color: var(--ink);
+}
+
+.secondary-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fbfcfa;
+  color: var(--brand-strong);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.assignment-detail {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.assignment-callout {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.assignment-callout strong {
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.assignment-terms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assignment-terms li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #ffffff;
+}
+
+.assignment-terms li span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.assignment-terms li strong,
+.assignment-terms li em {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.assignment-terms li strong {
+  font-size: 14px;
+}
+
+.assignment-terms li em {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 13px;
+  font-style: normal;
 }
 
 .search-panel {
@@ -403,7 +557,12 @@ h1 {
   }
 
   .translation-grid,
-  .controls {
+  .controls,
+  .assignment-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-terms {
     grid-template-columns: 1fr;
   }
 }
