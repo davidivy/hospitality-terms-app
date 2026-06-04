@@ -1,0 +1,11 @@
+{
+  "sourceEntryCounts": {
+    "房務管理": 404,
+    "客務管理": 333,
+    "旅館管理": 310,
+    "餐飲管理": 1409
+  },
+  "uniqueTerms": 1783,
+  "duplicateEntriesRemoved": 673,
+  "multiCategoryTerms": 230
+}

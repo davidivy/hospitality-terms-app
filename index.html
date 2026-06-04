@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>餐旅專有名詞學習 App</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="旅館專有名詞學習">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Hospitality Terms</p>
+            <h1>旅館、客務、房務、餐飲專有名詞</h1>
+          </div>
+          <div class="stats" aria-label="學習統計">
+            <span id="termCount">0 詞</span>
+            <span id="matchCount">0 筆</span>
+          </div>
+        </header>
+
+        <section class="search-panel" aria-label="搜尋與語音">
+          <div class="search-row">
+            <label class="search-box" for="searchInput">
+              <span>搜尋</span>
+              <input id="searchInput" type="search" autocomplete="off" placeholder="輸入中文、English、Tiếng Việt、Bahasa Indonesia">
+            </label>
+            <button id="voiceButton" class="icon-button" type="button" title="語音搜尋" aria-label="語音搜尋">🎙</button>
+          </div>
+          <div class="controls">
+            <label>
+              搜尋語言
+              <select id="languageSelect">
+                <option value="zh-TW">中文</option>
+                <option value="en-US">English</option>
+                <option value="vi-VN">Tiếng Việt</option>
+                <option value="id-ID">Bahasa Indonesia</option>
+              </select>
+            </label>
+            <label>
+              類別
+              <select id="categorySelect">
+                <option value="all">全部</option>
+              </select>
+            </label>
+          </div>
+          <p id="statusText" class="status" role="status">可輸入或按麥克風搜尋。</p>
+        </section>
+
+        <section class="content-grid">
+          <aside class="term-list" aria-label="詞彙列表">
+            <div id="termList" class="list"></div>
+          </aside>
+
+          <article id="termDetail" class="detail" aria-live="polite">
+            <div class="empty-state">
+              <h2>選擇一個專有名詞</h2>
+              <p>學生可以查詢翻譯、聽發音、看用法解釋與例句。</p>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
