@@ -3,29 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>葉佳山老師教程『旅館』與『餐飲』專業查詢系統</title>
-    <link rel="stylesheet" href="styles.css?v=20260606-names">
+    <title>葉佳山老師教程『旅館』與『餐飲』專業查詢系統 / Prof. David Yeh Hospitality and Culinary Search System</title>
+    <link rel="stylesheet" href="styles.css?v=20260606-bilingual">
   </head>
   <body>
     <main class="app-shell">
-      <section class="workspace" aria-label="葉佳山老師教程『旅館』與『餐飲』專業查詢系統">
+      <section class="workspace" aria-label="葉佳山老師教程『旅館』與『餐飲』專業查詢系統 / Prof. David Yeh Hospitality and Culinary Search System">
         <header class="topbar">
           <div>
             <p class="eyebrow">Hospitality Learning Database</p>
-            <h1 id="pageTitle">葉佳山老師教程『旅館』與『餐飲』專業查詢系統</h1>
+            <h1 id="pageTitle">葉佳山老師教程『旅館』與『餐飲』專業查詢系統 / Prof. David Yeh Hospitality and Culinary Search System</h1>
           </div>
-          <div class="stats" aria-label="學習統計">
+          <div class="stats" aria-label="學習統計 / Learning stats">
             <span id="termCount">0 詞</span>
             <span id="matchCount">0 筆</span>
           </div>
         </header>
 
-        <nav class="mode-tabs" aria-label="資料庫切換">
-          <button id="termsModeButton" class="mode-tab active" type="button">餐旅專有名詞查詢</button>
-          <button id="foodsModeButton" class="mode-tab" type="button">亞洲國家之料理查詢</button>
+        <nav class="mode-tabs" aria-label="資料庫切換 / Database switcher">
+          <button id="termsModeButton" class="mode-tab active" type="button">餐旅專有名詞查詢 / Hospitality Terms</button>
+          <button id="foodsModeButton" class="mode-tab" type="button">亞洲國家之料理查詢 / Asian Cuisine</button>
         </nav>
 
-        <section class="assignment-panel" aria-label="每日作業">
+        <section class="assignment-panel" aria-label="每日作業 / Daily assignment">
           <div class="assignment-heading">
             <div class="assignment-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -36,37 +36,37 @@
               </svg>
             </div>
             <div>
-              <h2>每日聽寫作業</h2>
-              <p id="assignmentSummary">每份約 15 個單字，老師可指定作業編號複習。</p>
+              <h2>每日聽寫作業 / Daily Dictation Assignment</h2>
+              <p id="assignmentSummary">每份約 15 個單字，老師可指定作業編號複習。 / About 15 words per assignment for class review.</p>
             </div>
           </div>
           <div class="assignment-controls">
             <label>
-              作業編號
+              作業編號 / Assignment
               <select id="assignmentSelect">
-                <option value="">選擇作業</option>
+                <option value="">選擇作業 / Select assignment</option>
               </select>
             </label>
-            <button id="clearAssignmentButton" class="secondary-button" type="button">顯示全部</button>
+            <button id="clearAssignmentButton" class="secondary-button" type="button">顯示全部 / Show all</button>
           </div>
           <div id="assignmentDetail" class="assignment-detail">
-            <p>選擇作業後，會列出本次聽寫單字與對應中文。</p>
+            <p>選擇作業後，會列出本次聽寫單字與對應中文。 / Select an assignment to view the dictation words and Chinese meanings.</p>
           </div>
         </section>
 
-        <section class="search-panel" aria-label="搜尋與語音">
+        <section class="search-panel" aria-label="搜尋與語音 / Search and voice">
           <div class="search-row">
             <label class="search-box" for="searchInput">
-              <span>搜尋</span>
-              <input id="searchInput" type="search" autocomplete="off" placeholder="輸入中文、English、Tiếng Việt、ภาษาไทย、Bahasa Indonesia">
+              <span>搜尋 / Search</span>
+              <input id="searchInput" type="search" autocomplete="off" placeholder="輸入中文或 English、Tiếng Việt、ภาษาไทย、Bahasa Indonesia">
             </label>
-            <button id="voiceButton" class="icon-button" type="button" title="語音搜尋" aria-label="語音搜尋">🎙</button>
+            <button id="voiceButton" class="icon-button" type="button" title="語音搜尋 / Voice search" aria-label="語音搜尋 / Voice search">🎙</button>
           </div>
           <div class="controls">
             <label>
-              搜尋語言
+              搜尋語言 / Search language
               <select id="languageSelect">
-                <option value="zh-TW">中文</option>
+                <option value="zh-TW">中文 / Chinese</option>
                 <option value="en-US">English</option>
                 <option value="vi-VN">Tiếng Việt</option>
                 <option value="th-TH">ภาษาไทย</option>
@@ -74,42 +74,42 @@
               </select>
             </label>
             <label id="countryFilter" hidden>
-              國家
+              國家 / Country
               <select id="countrySelect">
-                <option value="all">全部國家</option>
+                <option value="all">全部國家 / All countries</option>
               </select>
             </label>
             <label id="cuisineFilter" hidden>
-              八大菜系
+              八大菜系 / Chinese cuisines
               <select id="cuisineSelect">
-                <option value="all">全部菜系</option>
+                <option value="all">全部菜系 / All cuisines</option>
               </select>
             </label>
             <label>
-              類別
+              類別 / Category
               <select id="categorySelect">
-                <option value="all">全部</option>
+                <option value="all">全部 / All</option>
               </select>
             </label>
           </div>
-          <p id="statusText" class="status" role="status">可輸入或按麥克風搜尋。</p>
+          <p id="statusText" class="status" role="status">可輸入或按麥克風搜尋。 / Type or use the microphone to search.</p>
         </section>
 
         <section class="content-grid">
-          <aside class="term-list" aria-label="詞彙列表">
+          <aside class="term-list" aria-label="詞彙列表 / Term list">
             <div id="termList" class="list"></div>
           </aside>
 
           <article id="termDetail" class="detail" aria-live="polite">
             <div class="empty-state">
-              <h2>選擇一個專有名詞</h2>
-              <p>學生可以查詢翻譯、聽發音、看用法解釋與例句。</p>
+              <h2>選擇一個專有名詞 / Select a term</h2>
+              <p>學生可以查詢翻譯、聽發音、看用法解釋與例句。 / Students can view translations, pronunciation, usage notes, and examples.</p>
             </div>
           </article>
         </section>
       </section>
     </main>
 
-    <script src="app.js?v=20260606-names"></script>
+    <script src="app.js?v=20260606-bilingual"></script>
   </body>
 </html>

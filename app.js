@@ -1,5 +1,5 @@
 const labels = {
-  "zh-TW": "中文",
+  "zh-TW": "中文 / Chinese",
   "en-US": "English",
   "vi-VN": "Tiếng Việt",
   "th-TH": "ภาษาไทย",
@@ -104,7 +104,7 @@ async function init() {
     bindEvents();
     render();
   } catch (error) {
-    statusText.textContent = "詞庫載入失敗，請確認 terms.json 存在。";
+    statusText.textContent = "詞庫載入失敗，請確認 terms.json 存在。 / Failed to load the term database. Please check terms.json.";
   }
 }
 
@@ -139,7 +139,7 @@ function buildAssignments(terms) {
     const number = String(assignments.length + 1).padStart(2, "0");
     assignments.push({
       id: number,
-      title: `作業編號 ${number}`,
+      title: `作業編號 ${number} / Assignment ${number}`,
       terms: termsForAssignment,
       start: index + 1,
       end: index + termsForAssignment.length
@@ -150,7 +150,7 @@ function buildAssignments(terms) {
 }
 
 function setupAssignments() {
-  assignmentSummary.textContent = `共 ${state.assignments.length} 份作業，每份約 15 個單字，可作為課堂聽寫複習。`;
+  assignmentSummary.textContent = `共 ${state.assignments.length} 份作業，每份約 15 個單字，可作為課堂聽寫複習。 / ${state.assignments.length} assignments, about 15 words each, for class dictation review.`;
   state.assignments.forEach((assignment) => {
     const option = document.createElement("option");
     option.value = assignment.id;
@@ -166,7 +166,7 @@ function setupFilters() {
 }
 
 function setupCategories() {
-  categorySelect.innerHTML = `<option value="all">全部</option>`;
+  categorySelect.innerHTML = `<option value="all">全部 / All</option>`;
   const categoryOrder = state.mode === "foods"
     ? ["經典大菜", "地方小吃", "代表飲料（酒精）", "代表飲料（非酒精）", "調味料及應用的香料植物", "用餐禮儀", "典故介紹"]
     : ["旅館管理", "房務管理", "客務管理", "餐飲管理"];
@@ -188,7 +188,7 @@ function setupCategories() {
 }
 
 function setupCountries() {
-  countrySelect.innerHTML = `<option value="all">全部國家</option>`;
+  countrySelect.innerHTML = `<option value="all">全部國家 / All countries</option>`;
   const countries = [...new Set(state.foodTerms.map((term) => term.country))]
     .sort((a, b) => a.localeCompare(b, "zh-Hant"));
   countries.forEach((country) => {
@@ -200,7 +200,7 @@ function setupCountries() {
 }
 
 function setupCuisines() {
-  cuisineSelect.innerHTML = `<option value="all">全部菜系</option>`;
+  cuisineSelect.innerHTML = `<option value="all">全部菜系 / All cuisines</option>`;
   const cuisineOrder = ["魯菜", "川菜", "粵菜", "蘇菜", "閩菜", "浙菜", "湘菜", "徽菜"];
   const cuisines = [...new Set(state.foodTerms.map((term) => term.cuisine).filter(Boolean))]
     .sort((a, b) => cuisineOrder.indexOf(a) - cuisineOrder.indexOf(b));
@@ -235,7 +235,7 @@ function setupVoiceSearch() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     voiceButton.disabled = true;
-    voiceButton.title = "此瀏覽器不支援語音搜尋";
+    voiceButton.title = "此瀏覽器不支援語音搜尋 / Voice search is not supported in this browser";
     return;
   }
 
@@ -246,13 +246,13 @@ function setupVoiceSearch() {
 
   state.recognition.addEventListener("start", () => {
     voiceButton.classList.add("listening");
-    statusText.textContent = `正在聽 ${labels[languageSelect.value]} 語音搜尋。`;
+    statusText.textContent = `正在聽 ${labels[languageSelect.value]} 語音搜尋。 / Listening for ${labels[languageSelect.value]} voice search.`;
   });
 
   state.recognition.addEventListener("result", (event) => {
     const transcript = event.results[0][0].transcript.trim();
     searchInput.value = transcript;
-    statusText.textContent = `已辨識：${transcript}`;
+    statusText.textContent = `已辨識：${transcript} / Recognized: ${transcript}`;
     filterTerms();
   });
 
@@ -261,7 +261,7 @@ function setupVoiceSearch() {
   });
 
   state.recognition.addEventListener("error", () => {
-    statusText.textContent = "語音搜尋未成功，請再試一次或改用文字搜尋。";
+    statusText.textContent = "語音搜尋未成功，請再試一次或改用文字搜尋。 / Voice search failed. Please try again or type your search.";
   });
 }
 
@@ -329,17 +329,19 @@ function clearAssignment() {
 
 function render() {
   const isFoodsMode = state.mode === "foods";
-  pageTitle.textContent = isFoodsMode ? "亞洲國家之料理查詢" : "葉佳山老師教程『旅館』與『餐飲』專業查詢系統";
-  termCount.textContent = isFoodsMode ? `${state.terms.length} 筆` : `${state.terms.length} 詞`;
-  matchCount.textContent = `${state.filtered.length} 筆`;
+  pageTitle.textContent = isFoodsMode
+    ? "亞洲國家之料理查詢 / Asian Cuisine Search"
+    : "葉佳山老師教程『旅館』與『餐飲』專業查詢系統 / Prof. David Yeh Hospitality and Culinary Search System";
+  termCount.textContent = isFoodsMode ? `${state.terms.length} 筆 / items` : `${state.terms.length} 詞 / terms`;
+  matchCount.textContent = `${state.filtered.length} 筆 / results`;
   assignmentPanel.hidden = isFoodsMode;
   countryFilter.hidden = !isFoodsMode;
   cuisineFilter.hidden = !isFoodsMode;
   termsModeButton.classList.toggle("active", !isFoodsMode);
   foodsModeButton.classList.toggle("active", isFoodsMode);
   statusText.textContent = isFoodsMode
-    ? "可依國家、八大菜系、分類、五語名稱、典故或香料植物搜尋。"
-    : "可輸入或按麥克風搜尋。";
+    ? "可依國家、八大菜系、分類、五語名稱、典故或香料植物搜尋。 / Search by country, cuisine, category, five-language names, stories, or spices."
+    : "可輸入或按麥克風搜尋。 / Type or use the microphone to search.";
   renderList();
   renderDetail();
   renderAssignmentDetail();
@@ -349,7 +351,7 @@ function renderList() {
   termList.innerHTML = "";
 
   if (state.filtered.length === 0) {
-    termList.innerHTML = `<div class="empty-state"><p>查無符合詞彙。</p></div>`;
+    termList.innerHTML = `<div class="empty-state"><p>查無符合詞彙。 / No matching terms found.</p></div>`;
     return;
   }
 
@@ -379,7 +381,7 @@ function renderAssignmentDetail() {
   const assignment = state.assignments.find((item) => item.id === state.activeAssignmentId);
 
   if (!assignment) {
-    assignmentDetail.innerHTML = "<p>選擇作業後，會列出本次聽寫單字與對應中文。</p>";
+    assignmentDetail.innerHTML = "<p>選擇作業後，會列出本次聽寫單字與對應中文。 / Select an assignment to view the dictation words and Chinese meanings.</p>";
     return;
   }
 
@@ -398,7 +400,7 @@ function renderAssignmentDetail() {
   assignmentDetail.innerHTML = `
     <div class="assignment-callout">
       <strong>${assignment.title}</strong>
-      <p>老師可宣布：「同學複習${assignment.title}，下週上課考聽寫。」</p>
+      <p>老師可宣布：「同學複習${assignment.title}，下週上課考聽寫。」 / Teacher note: Review ${assignment.title} for next week's dictation.</p>
     </div>
     <ol class="assignment-terms">${rows}</ol>
   `;
@@ -424,8 +426,8 @@ function renderDetail() {
   if (!term) {
     termDetail.innerHTML = `
       <div class="empty-state">
-        <h2>沒有符合的專有名詞</h2>
-        <p>請換一個關鍵字，或調整類別。</p>
+        <h2>沒有符合的專有名詞 / No matching terms</h2>
+        <p>請換一個關鍵字，或調整類別。 / Try another keyword or adjust the category.</p>
       </div>
     `;
     return;
@@ -443,7 +445,7 @@ function renderDetail() {
 
   const examples = (term.examples ?? []).map((example, index) => `
     <li class="example-card">
-      <h4>例句 ${index + 1}</h4>
+      <h4>例句 ${index + 1} / Example ${index + 1}</h4>
       ${renderLanguageRows(example, "language-row", false)}
     </li>
   `).join("");
@@ -459,11 +461,11 @@ function renderDetail() {
       <div class="translation-grid">${translations}</div>
     </div>
     <section class="section">
-      <h3>解釋用法</h3>
+      <h3>解釋用法 / Usage Notes</h3>
       <div class="language-stack">${usages}</div>
     </section>
     <section class="section">
-      <h3>例句</h3>
+      <h3>例句 / Examples</h3>
       <ul class="examples">${examples}</ul>
     </section>
   `;
@@ -487,21 +489,21 @@ function renderFoodDetail(term, termCategories) {
         <h2>${escapeHtml(getLocalized(term.terms, "zh-TW"))}</h2>
         <div class="phonetic">${escapeHtml(termCategories.join("、"))}</div>
         <div class="link-actions">
-          <a href="${escapeHtml(term.referenceUrl)}" target="_blank" rel="noopener">參考網址</a>
+          <a href="${escapeHtml(term.referenceUrl)}" target="_blank" rel="noopener">參考網址 / Reference</a>
           <a href="${escapeHtml(term.youtubeUrl)}" target="_blank" rel="noopener">YouTube 影片</a>
         </div>
       </div>
     </div>
     <section class="section">
-      <h3>五語名稱</h3>
+      <h3>五語名稱 / Names in Five Languages</h3>
       <div class="translation-grid">${translations}</div>
     </section>
     <section class="section">
-      <h3>內容說明</h3>
+      <h3>內容說明 / Description</h3>
       <div class="language-stack">${usages}</div>
     </section>
     <section class="section">
-      <h3>典故介紹</h3>
+      <h3>典故介紹 / Background Story</h3>
       <p class="story-text">${escapeHtml(term.story)}</p>
     </section>
   `;
@@ -525,7 +527,7 @@ function renderLanguageRows(content, className, emphasize) {
 
 function renderSpeakIcon(text, lang, label) {
   return `
-    <button class="speak-icon" type="button" data-lang="${lang}" data-text="${escapeHtml(text)}" title="播放 ${label} 發音" aria-label="播放 ${label} 發音">
+    <button class="speak-icon" type="button" data-lang="${lang}" data-text="${escapeHtml(text)}" title="播放 ${label} 發音 / Play ${label} pronunciation" aria-label="播放 ${label} 發音 / Play ${label} pronunciation">
       <svg aria-hidden="true" viewBox="0 0 24 24">
         <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
         <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
@@ -537,7 +539,7 @@ function renderSpeakIcon(text, lang, label) {
 
 function speak(text, lang) {
   if (!window.speechSynthesis) {
-    statusText.textContent = "此瀏覽器不支援語音播放。";
+    statusText.textContent = "此瀏覽器不支援語音播放。 / Speech playback is not supported in this browser.";
     return;
   }
 
@@ -584,5 +586,5 @@ function getLocalized(content, lang) {
     return "";
   }
 
-  return content[lang] ?? content["zh-TW"] ?? content["en-US"] ?? "待補";
+  return content[lang] ?? content["zh-TW"] ?? content["en-US"] ?? "待補 / Pending";
 }
