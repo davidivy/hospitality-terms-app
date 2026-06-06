@@ -329,7 +329,7 @@ function clearAssignment() {
 
 function render() {
   const isFoodsMode = state.mode === "foods";
-  pageTitle.textContent = isFoodsMode ? "亞洲國家傳統經典菜色查詢系統" : "旅館、客務、房務、餐飲專有名詞";
+  pageTitle.textContent = isFoodsMode ? "亞洲國家之料理查詢" : "葉佳山老師教程『旅館』與『餐飲』專業查詢系統";
   termCount.textContent = isFoodsMode ? `${state.terms.length} 筆` : `${state.terms.length} 詞`;
   matchCount.textContent = `${state.filtered.length} 筆`;
   assignmentPanel.hidden = isFoodsMode;
