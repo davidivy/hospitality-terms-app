@@ -3,22 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>餐旅專有名詞學習 App</title>
-    <link rel="stylesheet" href="styles.css?v=20260605-homework-multilingual">
+    <title>餐旅專有名詞與亞洲經典菜色查詢 App</title>
+    <link rel="stylesheet" href="styles.css?v=20260605-asian-foods">
   </head>
   <body>
     <main class="app-shell">
       <section class="workspace" aria-label="旅館專有名詞學習">
         <header class="topbar">
           <div>
-            <p class="eyebrow">Hospitality Terms</p>
-            <h1>旅館、客務、房務、餐飲專有名詞</h1>
+            <p class="eyebrow">Hospitality Learning Database</p>
+            <h1 id="pageTitle">旅館、客務、房務、餐飲專有名詞</h1>
           </div>
           <div class="stats" aria-label="學習統計">
             <span id="termCount">0 詞</span>
             <span id="matchCount">0 筆</span>
           </div>
         </header>
+
+        <nav class="mode-tabs" aria-label="資料庫切換">
+          <button id="termsModeButton" class="mode-tab active" type="button">旅館專有名詞</button>
+          <button id="foodsModeButton" class="mode-tab" type="button">亞洲經典菜色</button>
+        </nav>
+
+        <a class="independent-link" href="asian-foods.html">開啟獨立版亞洲傳統菜色查詢系統</a>
 
         <section class="assignment-panel" aria-label="每日作業">
           <div class="assignment-heading">
@@ -53,7 +60,7 @@
           <div class="search-row">
             <label class="search-box" for="searchInput">
               <span>搜尋</span>
-              <input id="searchInput" type="search" autocomplete="off" placeholder="輸入中文、English、Tiếng Việt、Bahasa Indonesia">
+              <input id="searchInput" type="search" autocomplete="off" placeholder="輸入中文、English、Tiếng Việt、ภาษาไทย、Bahasa Indonesia">
             </label>
             <button id="voiceButton" class="icon-button" type="button" title="語音搜尋" aria-label="語音搜尋">🎙</button>
           </div>
@@ -64,7 +71,20 @@
                 <option value="zh-TW">中文</option>
                 <option value="en-US">English</option>
                 <option value="vi-VN">Tiếng Việt</option>
+                <option value="th-TH">ภาษาไทย</option>
                 <option value="id-ID">Bahasa Indonesia</option>
+              </select>
+            </label>
+            <label id="countryFilter" hidden>
+              國家
+              <select id="countrySelect">
+                <option value="all">全部國家</option>
+              </select>
+            </label>
+            <label id="cuisineFilter" hidden>
+              八大菜系
+              <select id="cuisineSelect">
+                <option value="all">全部菜系</option>
               </select>
             </label>
             <label>
@@ -92,6 +112,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260605-homework-multilingual"></script>
+    <script src="app.js?v=20260605-asian-foods"></script>
   </body>
 </html>

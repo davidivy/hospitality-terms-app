@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>亞洲傳統菜色查詢系統</title>
+    <link rel="stylesheet" href="asian-foods.css?v=20260606-links">
+  </head>
+  <body>
+    <main class="food-app">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Asian Traditional Food</p>
+          <h1>亞洲傳統菜色查詢系統</h1>
+          <p class="subtitle">依國家地區、中國八大菜系、經典大菜、地方小吃、代表飲料與關鍵字查詢。</p>
+        </div>
+        <div class="stats" aria-label="資料統計">
+          <span id="totalCount">0 筆</span>
+          <span id="matchCount">0 筆符合</span>
+        </div>
+      </header>
+
+      <section id="searchTop" class="search-panel" aria-label="查詢條件">
+        <label class="search-box" for="searchInput">
+          <span>關鍵字查詢</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="不知道名稱時，可輸入國家、菜系、食材、飲料、典故或任一語言">
+        </label>
+        <div class="filter-grid">
+          <label>
+            國家地區
+            <select id="countrySelect">
+              <option value="all">全部國家地區</option>
+            </select>
+          </label>
+          <label>
+            查詢分類
+            <select id="categorySelect">
+              <option value="all">全部分類</option>
+            </select>
+          </label>
+          <label>
+            飲料類型
+            <select id="drinkSelect">
+              <option value="all">全部飲料</option>
+              <option value="酒精">酒精</option>
+              <option value="非酒精">非酒精</option>
+            </select>
+          </label>
+          <label>
+            米其林及必比登年度
+            <select id="yearSelect">
+              <option value="all">全部年度</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="browse-panel" aria-label="分類列表">
+        <div class="panel-heading">
+          <h2>列表查詢</h2>
+          <p>學生不知道菜名時，可先從國家、分類或中國八大菜系進入。</p>
+        </div>
+        <div id="quickLists" class="quick-lists"></div>
+      </section>
+
+      <section class="content-layout">
+        <aside class="result-list" aria-label="查詢結果">
+          <div id="resultList" class="cards"></div>
+        </aside>
+
+        <article id="detailPanel" class="detail-panel" aria-live="polite">
+          <div class="empty-state">
+            <h2>請選擇一筆資料</h2>
+            <p>右側會顯示五語名稱、內容說明、典故、標章、參考網址與 YouTube 影片。</p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <script src="asian-foods-app.js?v=20260606-links"></script>
+  </body>
+</html>

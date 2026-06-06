@@ -37,8 +37,32 @@ PDF_SOURCES = [
 
 LANG_PLACEHOLDERS = {
     "vi-VN": "Chờ bổ sung bản dịch",
+    "th-TH": "รอเพิ่มคำแปลภาษาไทย",
     "id-ID": "Menunggu terjemahan",
 }
+
+THAI_CATEGORY_NAMES = {
+    "旅館管理": "การจัดการโรงแรม",
+    "房務管理": "การจัดการงานแม่บ้าน",
+    "客務管理": "การจัดการงานส่วนหน้า",
+    "餐飲管理": "การจัดการอาหารและเครื่องดื่ม",
+}
+
+
+def thai_category(category: str) -> str:
+    return THAI_CATEGORY_NAMES.get(category, category)
+
+
+def thai_term_label(english: str, chinese: str) -> str:
+    return f"คำว่า {english}（ความหมายภาษาจีน：{chinese}）"
+
+
+def thai_usage(english: str, chinese: str, category: str) -> str:
+    return f"「{english}」เป็นคำศัพท์เฉพาะด้าน{thai_category(category)} มีความหมายภาษาจีนว่า「{chinese}」。"
+
+
+def thai_example(english: str, category: str) -> str:
+    return f"โปรดอธิบายความหมายของ {english} ในบริบทของ{thai_category(category)}。"
 
 
 def normalize_english(value: str) -> str:
@@ -165,12 +189,14 @@ def merge_entries() -> tuple[list[dict], dict]:
               "zh-TW": chinese,
               "en-US": item["english"],
               "vi-VN": LANG_PLACEHOLDERS["vi-VN"],
+              "th-TH": thai_term_label(item["english"], chinese),
               "id-ID": LANG_PLACEHOLDERS["id-ID"],
           },
           "usage": {
               "zh-TW": f"「{item['english']}」屬於{primary_category}專業術語，中文意思為「{chinese}」。",
               "en-US": f"Professional term used in {primary_category}. Chinese meaning: {chinese}.",
               "vi-VN": "Nội dung giải thích tiếng Việt đang chờ bổ sung.",
+              "th-TH": thai_usage(item["english"], chinese, primary_category),
               "id-ID": "Penjelasan bahasa Indonesia menunggu pelengkapan.",
           },
           "examples": [
@@ -178,6 +204,7 @@ def merge_entries() -> tuple[list[dict], dict]:
                   "zh-TW": f"請說明 {item['english']} 在{primary_category}中的意思。",
                   "en-US": f"Please explain the meaning of {item['english']} in {primary_category}.",
                   "vi-VN": "Câu ví dụ tiếng Việt đang chờ bổ sung.",
+                  "th-TH": thai_example(item["english"], primary_category),
                   "id-ID": "Kalimat contoh bahasa Indonesia menunggu pelengkapan.",
               }
           ],

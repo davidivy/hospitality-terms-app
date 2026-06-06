@@ -2,6 +2,7 @@ const labels = {
   "zh-TW": "中文",
   "en-US": "English",
   "vi-VN": "Tiếng Việt",
+  "th-TH": "ภาษาไทย",
   "id-ID": "Bahasa Indonesia"
 };
 
@@ -33,6 +34,12 @@ const voiceSettings = {
     volume: 1,
     preferredNames: ["Linh", "Google tiếng Việt", "Microsoft HoaiMy"]
   },
+  "th-TH": {
+    rate: 0.82,
+    pitch: 1,
+    volume: 1,
+    preferredNames: ["Kanya", "Google ภาษาไทย", "Microsoft Premwadee"]
+  },
   "id-ID": {
     rate: 0.86,
     pitch: 1,
@@ -42,19 +49,28 @@ const voiceSettings = {
 };
 
 const state = {
+  allTerms: [],
+  hospitalityTerms: [],
+  foodTerms: [],
   terms: [],
   filtered: [],
   assignments: [],
+  mode: "terms",
   activeAssignmentId: "",
   activeId: null,
   recognition: null
 };
 
+const pageTitle = document.querySelector("#pageTitle");
 const termCount = document.querySelector("#termCount");
 const matchCount = document.querySelector("#matchCount");
 const searchInput = document.querySelector("#searchInput");
 const languageSelect = document.querySelector("#languageSelect");
 const categorySelect = document.querySelector("#categorySelect");
+const countryFilter = document.querySelector("#countryFilter");
+const countrySelect = document.querySelector("#countrySelect");
+const cuisineFilter = document.querySelector("#cuisineFilter");
+const cuisineSelect = document.querySelector("#cuisineSelect");
 const voiceButton = document.querySelector("#voiceButton");
 const statusText = document.querySelector("#statusText");
 const termList = document.querySelector("#termList");
@@ -63,17 +79,26 @@ const assignmentSummary = document.querySelector("#assignmentSummary");
 const assignmentSelect = document.querySelector("#assignmentSelect");
 const assignmentDetail = document.querySelector("#assignmentDetail");
 const clearAssignmentButton = document.querySelector("#clearAssignmentButton");
+const assignmentPanel = document.querySelector(".assignment-panel");
+const termsModeButton = document.querySelector("#termsModeButton");
+const foodsModeButton = document.querySelector("#foodsModeButton");
 
 init();
 
 async function init() {
   try {
-    const response = await fetch("terms.json");
-    state.terms = await response.json();
-    state.assignments = buildAssignments(state.terms);
+    const [termsResponse, foodsResponse] = await Promise.all([
+      fetch("terms.json"),
+      fetch("asian-foods.json")
+    ]);
+    state.hospitalityTerms = await termsResponse.json();
+    state.foodTerms = await foodsResponse.json();
+    state.allTerms = [...state.hospitalityTerms, ...state.foodTerms];
+    state.terms = state.hospitalityTerms;
+    state.assignments = buildAssignments(state.hospitalityTerms);
     state.filtered = state.terms;
     state.activeId = state.terms[0]?.id ?? null;
-    setupCategories();
+    setupFilters();
     setupAssignments();
     setupVoiceSearch();
     bindEvents();
@@ -90,9 +115,13 @@ function bindEvents() {
     filterTerms();
   });
   categorySelect.addEventListener("change", filterTerms);
+  countrySelect.addEventListener("change", filterTerms);
+  cuisineSelect.addEventListener("change", filterTerms);
   voiceButton.addEventListener("click", startVoiceSearch);
   assignmentSelect.addEventListener("change", applyAssignment);
   clearAssignmentButton.addEventListener("click", clearAssignment);
+  termsModeButton.addEventListener("click", () => setMode("terms"));
+  foodsModeButton.addEventListener("click", () => setMode("foods"));
 
   if (window.speechSynthesis) {
     window.speechSynthesis.addEventListener("voiceschanged", () => {
@@ -130,16 +159,76 @@ function setupAssignments() {
   });
 }
 
+function setupFilters() {
+  setupCategories();
+  setupCountries();
+  setupCuisines();
+}
+
 function setupCategories() {
-  const categoryOrder = ["旅館管理", "房務管理", "客務管理", "餐飲管理"];
+  categorySelect.innerHTML = `<option value="all">全部</option>`;
+  const categoryOrder = state.mode === "foods"
+    ? ["經典大菜", "地方小吃", "代表飲料（酒精）", "代表飲料（非酒精）", "調味料及應用的香料植物", "用餐禮儀", "典故介紹"]
+    : ["旅館管理", "房務管理", "客務管理", "餐飲管理"];
   const categories = [...new Set(state.terms.flatMap((term) => term.categories ?? [term.category]))]
-    .sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
+    .sort((a, b) => {
+      const aIndex = categoryOrder.indexOf(a);
+      const bIndex = categoryOrder.indexOf(b);
+      if (aIndex === -1 && bIndex === -1) return a.localeCompare(b, "zh-Hant");
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
   categories.forEach((category) => {
     const option = document.createElement("option");
     option.value = category;
     option.textContent = category;
     categorySelect.append(option);
   });
+}
+
+function setupCountries() {
+  countrySelect.innerHTML = `<option value="all">全部國家</option>`;
+  const countries = [...new Set(state.foodTerms.map((term) => term.country))]
+    .sort((a, b) => a.localeCompare(b, "zh-Hant"));
+  countries.forEach((country) => {
+    const option = document.createElement("option");
+    option.value = country;
+    option.textContent = country;
+    countrySelect.append(option);
+  });
+}
+
+function setupCuisines() {
+  cuisineSelect.innerHTML = `<option value="all">全部菜系</option>`;
+  const cuisineOrder = ["魯菜", "川菜", "粵菜", "蘇菜", "閩菜", "浙菜", "湘菜", "徽菜"];
+  const cuisines = [...new Set(state.foodTerms.map((term) => term.cuisine).filter(Boolean))]
+    .sort((a, b) => cuisineOrder.indexOf(a) - cuisineOrder.indexOf(b));
+  cuisines.forEach((cuisine) => {
+    const option = document.createElement("option");
+    option.value = cuisine;
+    option.textContent = cuisine;
+    cuisineSelect.append(option);
+  });
+}
+
+function setMode(mode) {
+  if (state.mode === mode) {
+    return;
+  }
+
+  state.mode = mode;
+  state.terms = mode === "foods" ? state.foodTerms : state.hospitalityTerms;
+  state.filtered = state.terms;
+  state.activeId = state.terms[0]?.id ?? null;
+  state.activeAssignmentId = "";
+  searchInput.value = "";
+  assignmentSelect.value = "";
+  categorySelect.value = "all";
+  countrySelect.value = "all";
+  cuisineSelect.value = "all";
+  setupCategories();
+  render();
 }
 
 function setupVoiceSearch() {
@@ -188,21 +277,30 @@ function startVoiceSearch() {
 function filterTerms() {
   const query = normalize(searchInput.value);
   const category = categorySelect.value;
-  const assignment = state.assignments.find((item) => item.id === state.activeAssignmentId);
+  const country = countrySelect.value;
+  const cuisine = cuisineSelect.value;
+  const assignment = state.mode === "terms"
+    ? state.assignments.find((item) => item.id === state.activeAssignmentId)
+    : null;
   const assignmentIds = new Set(assignment?.terms.map((term) => term.id) ?? []);
 
   state.filtered = state.terms.filter((term) => {
     const termCategories = term.categories ?? [term.category];
     const assignmentMatch = !assignment || assignmentIds.has(term.id);
     const categoryMatch = category === "all" || termCategories.includes(category);
+    const countryMatch = state.mode !== "foods" || country === "all" || term.country === country;
+    const cuisineMatch = state.mode !== "foods" || cuisine === "all" || term.cuisine === cuisine;
     const text = [
+      term.country,
+      term.cuisine,
+      term.story,
       ...termCategories,
       ...Object.values(term.usage),
       term.phonetic,
       ...Object.values(term.terms),
-      ...term.examples.flatMap((example) => Object.values(example))
+      ...(term.examples ?? []).flatMap((example) => Object.values(example))
     ].join(" ");
-    return assignmentMatch && categoryMatch && normalize(text).includes(query);
+    return assignmentMatch && categoryMatch && countryMatch && cuisineMatch && normalize(text).includes(query);
   });
 
   if (!state.filtered.some((term) => term.id === state.activeId)) {
@@ -230,8 +328,18 @@ function clearAssignment() {
 }
 
 function render() {
-  termCount.textContent = `${state.terms.length} 詞`;
+  const isFoodsMode = state.mode === "foods";
+  pageTitle.textContent = isFoodsMode ? "亞洲國家傳統經典菜色查詢系統" : "旅館、客務、房務、餐飲專有名詞";
+  termCount.textContent = isFoodsMode ? `${state.terms.length} 筆` : `${state.terms.length} 詞`;
   matchCount.textContent = `${state.filtered.length} 筆`;
+  assignmentPanel.hidden = isFoodsMode;
+  countryFilter.hidden = !isFoodsMode;
+  cuisineFilter.hidden = !isFoodsMode;
+  termsModeButton.classList.toggle("active", !isFoodsMode);
+  foodsModeButton.classList.toggle("active", isFoodsMode);
+  statusText.textContent = isFoodsMode
+    ? "可依國家、八大菜系、分類、五語名稱、典故或香料植物搜尋。"
+    : "可輸入或按麥克風搜尋。";
   renderList();
   renderDetail();
   renderAssignmentDetail();
@@ -249,11 +357,13 @@ function renderList() {
     const termCategories = term.categories ?? [term.category];
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `term-card${term.id === state.activeId ? " active" : ""}`;
+    button.className = `term-card${term.id === state.activeId ? " active" : ""}${term.domain === "asian-food" ? " food-card" : ""}`;
     button.innerHTML = `
-      <strong>${escapeHtml(term.terms["en-US"])}</strong>
-      <span>${escapeHtml(term.terms["zh-TW"])}｜${escapeHtml(term.terms["vi-VN"])}</span>
-      <span>${escapeHtml(term.terms["id-ID"])}</span>
+      <strong>${escapeHtml(getLocalized(term.terms, "en-US"))}</strong>
+      <span>${escapeHtml(getLocalized(term.terms, "zh-TW"))}｜${escapeHtml(getLocalized(term.terms, "vi-VN"))}</span>
+      <span>${escapeHtml(getLocalized(term.terms, "th-TH"))}｜${escapeHtml(getLocalized(term.terms, "id-ID"))}</span>
+      ${term.country ? `<span class="country-chip">${escapeHtml(term.country)}</span>` : ""}
+      ${term.cuisine ? `<span class="cuisine-chip">${escapeHtml(term.cuisine)}</span>` : ""}
       <span class="badge">${termCategories.map(escapeHtml).join("、")}</span>
     `;
     button.addEventListener("click", () => {
@@ -302,8 +412,8 @@ function renderAssignmentLanguageRows(content) {
   return Object.entries(labels).map(([lang, label]) => `
     <div class="assignment-language-row">
       <span>${label}</span>
-      <strong>${escapeHtml(content[lang])}</strong>
-      ${renderSpeakIcon(content[lang], lang, label)}
+      <strong>${escapeHtml(getLocalized(content, lang))}</strong>
+      ${renderSpeakIcon(getLocalized(content, lang), lang, label)}
     </div>
   `).join("");
 }
@@ -323,10 +433,15 @@ function renderDetail() {
   const termCategories = term.categories ?? [term.category];
   const metaText = [term.phonetic, termCategories.join("、")].filter(Boolean).join("｜");
 
+  if (term.domain === "asian-food") {
+    renderFoodDetail(term, termCategories);
+    return;
+  }
+
   const translations = renderLanguageRows(term.terms, "translation", true);
   const usages = renderLanguageRows(term.usage, "language-row", false);
 
-  const examples = term.examples.map((example, index) => `
+  const examples = (term.examples ?? []).map((example, index) => `
     <li class="example-card">
       <h4>例句 ${index + 1}</h4>
       ${renderLanguageRows(example, "language-row", false)}
@@ -358,13 +473,51 @@ function renderDetail() {
   });
 }
 
+function renderFoodDetail(term, termCategories) {
+  const translations = renderLanguageRows(term.terms, "translation", true);
+  const usages = renderLanguageRows(term.usage, "language-row", false);
+
+  termDetail.innerHTML = `
+    <div class="food-hero">
+      <div class="food-hero-body">
+        <div class="food-chip-row">
+          <span class="country-chip">${escapeHtml(term.country)}</span>
+          ${term.cuisine ? `<span class="cuisine-chip">${escapeHtml(term.cuisine)}</span>` : ""}
+        </div>
+        <h2>${escapeHtml(getLocalized(term.terms, "zh-TW"))}</h2>
+        <div class="phonetic">${escapeHtml(termCategories.join("、"))}</div>
+        <div class="link-actions">
+          <a href="${escapeHtml(term.referenceUrl)}" target="_blank" rel="noopener">參考網址</a>
+          <a href="${escapeHtml(term.youtubeUrl)}" target="_blank" rel="noopener">YouTube 影片</a>
+        </div>
+      </div>
+    </div>
+    <section class="section">
+      <h3>五語名稱</h3>
+      <div class="translation-grid">${translations}</div>
+    </section>
+    <section class="section">
+      <h3>內容說明</h3>
+      <div class="language-stack">${usages}</div>
+    </section>
+    <section class="section">
+      <h3>典故介紹</h3>
+      <p class="story-text">${escapeHtml(term.story)}</p>
+    </section>
+  `;
+
+  termDetail.querySelectorAll(".speak-icon").forEach((button) => {
+    button.addEventListener("click", () => speak(button.dataset.text, button.dataset.lang));
+  });
+}
+
 function renderLanguageRows(content, className, emphasize) {
   return Object.entries(labels).map(([lang, label]) => `
     <div class="${className}">
       <span>${label}</span>
       <div class="translation-line">
-        ${emphasize ? `<strong>${escapeHtml(content[lang])}</strong>` : `<p>${escapeHtml(content[lang])}</p>`}
-        ${renderSpeakIcon(content[lang], lang, label)}
+        ${emphasize ? `<strong>${escapeHtml(getLocalized(content, lang))}</strong>` : `<p>${escapeHtml(getLocalized(content, lang))}</p>`}
+        ${renderSpeakIcon(getLocalized(content, lang), lang, label)}
       </div>
     </div>
   `).join("");
@@ -413,15 +566,23 @@ function findPreferredVoice(lang, preferredNames) {
 }
 
 function normalize(value) {
-  return value.toString().trim().toLocaleLowerCase();
+  return (value ?? "").toString().trim().toLocaleLowerCase();
 }
 
 function escapeHtml(value) {
-  return value.toString().replace(/[&<>"']/g, (char) => ({
+  return (value ?? "").toString().replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
     "'": "&#039;"
   })[char]);
+}
+
+function getLocalized(content, lang) {
+  if (!content) {
+    return "";
+  }
+
+  return content[lang] ?? content["zh-TW"] ?? content["en-US"] ?? "待補";
 }

@@ -1,6 +1,6 @@
 # 旅館專有名詞學習 App
 
-這是一個給旅館、客務、房務課程使用的專有名詞學習 App。學生可以用中文、英文、越南文、印尼文搜尋，查看翻譯、用法解釋與例句，並使用瀏覽器語音輸入與語音播放。
+這是一個給旅館、客務、房務課程使用的專有名詞學習 App。學生可以用中文、英文、越南文、泰文、印尼文搜尋，查看翻譯、用法解釋與例句，並使用瀏覽器語音輸入與語音播放。
 
 目前資料庫由 5 份 PDF 專業術語檔匯入，已依旅館管理、房務管理、客務管理、餐飲管理分類並去除重複詞。匯入統計保存在 `data/terms-import-summary.json`。
 
@@ -34,12 +34,14 @@ http://localhost:4173
     "zh-TW": "中文",
     "en-US": "English",
     "vi-VN": "Tiếng Việt",
+    "th-TH": "ภาษาไทย",
     "id-ID": "Bahasa Indonesia"
   },
   "usage": {
     "zh-TW": "中文用法解釋。",
     "en-US": "English usage explanation.",
     "vi-VN": "Giải thích cách dùng bằng tiếng Việt.",
+    "th-TH": "คำอธิบายการใช้งานภาษาไทย。",
     "id-ID": "Penjelasan penggunaan dalam bahasa Indonesia."
   },
   "examples": [
@@ -47,6 +49,7 @@ http://localhost:4173
       "zh-TW": "中文例句。",
       "en-US": "English example sentence.",
       "vi-VN": "Câu ví dụ tiếng Việt.",
+      "th-TH": "ประโยคตัวอย่างภาษาไทย。",
       "id-ID": "Kalimat contoh bahasa Indonesia."
     }
   ]
@@ -55,4 +58,4 @@ http://localhost:4173
 
 ## 下一步
 
-把旅館、客務、房務專有英文給我後，我可以協助批次補上中文、越南文、印尼文翻譯、用法解釋與例句。
+把旅館、客務、房務專有英文給我後，我可以協助批次補上中文、越南文、泰文、印尼文翻譯、用法解釋與例句。
